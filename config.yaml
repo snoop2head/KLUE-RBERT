@@ -1,0 +1,46 @@
+data:
+  root_path: ./
+  root_data_path: ./data
+  train_file_path: ./data/train.csv
+  test_file_path: ./data/test_data.csv
+  prediction_data_path: ./result
+  label_to_num_file_path: ./data/dict_label_to_num.pkl
+  num_to_label_file_path: ./data/dict_num_to_label.pkl
+  pororo_train_path: ./data/train_pororo_sub.csv
+  pororo_test_path: ./data/test_pororo_sub.csv
+  pororo_special_token_path: ./data/pororo_special_token.txt
+  result_dir: ./result
+  saved_model_dir: ./best_models
+  logging_dir: ./logs
+
+RBERT:
+  # wandb configuration
+  user_name: happyface
+
+  # dataset configuration
+  num_labels: 30
+  num_workers: 4
+  max_token_length: 132
+  stopwords: []
+
+  # train configuration
+  pretrained_model_name: klue/roberta-large
+  fine_tuning_method: RBERT
+  batch_size: 40
+  num_folds: 5
+  num_train_epochs: 5
+  loss: focalloss
+  gamma: 1
+  optimizer: adamp
+  scheduler: get_cosine_schedule_with_warmup
+  learning_rate: 0.00005
+  weight_decay: 0.01
+  warmup_steps: 500
+  debug: false
+  dropout_rate: 0.1
+
+  # evaluation and saving configuration
+  save_steps: 100
+  evaluation_steps: 100
+  metric_for_best_model: eval/loss
+  load_best_model_at_end: true
