@@ -20,114 +20,6 @@ object_entity: 오라클
 relation: 단체:별칭 (org:alternate_names)
 ```
 
-## 평가 방법
-
-KLUE-RE evaluation metric을 그대로 재현했습니다.
-
-1. no_relation class를 제외한 **micro F1 score**
-2. 모든 class에 대한 **area under the precision-recall curve (AUPRC)**
-
-- 2가지 metric으로 평가하며, **micro F1 score**가 우선시 됩니다.
-
-Micro F1 score
-
-- micro-precision과 micro-recall의 조화 평균이며, 각 샘플에 동일한 importance를 부여해, 샘플이 많은 클래스에 더 많은 가중치를 부여합니다. 데이터 분포상 많은 부분을 차지하고 있는 no_relation class는 제외하고 F1 score가 계산 됩니다.
-
-AUPRC
-
-- x축은 Recall, y축은 Precision이며, 모든 class에 대한 평균적인 AUPRC로 계산해 score를 측정 합니다. imbalance한 데이터에 유용한 metric 입니다
-
-## Dataset
-
-- dataset 설명
-
-```
-data
-|    +- train_pororo_sub.csv
-|    +- test_pororo_sub.csv
-|    +- train.csv
-|    +- test.csv
-```
-
-    - 'train_pororo_sub.csv'를 활용하여 `RBERT`, `KLUE/RoBERTa-large` 학습을 진행한다.
-    - 'test_pororo_sub.csv'를 활용하여 `RBERT`, `KLUE/RoBERTa-large` 모델을 바탕으로 'submission.csv' 파일을 생성한다.
-    - 'train.csv'를 활용하여 `RE Improved Baseline` 학습을 진행한다.
-    - 'test.csv'를 활용하여 `RE Improved Baseline` 모델을 바탕으로 'submission.csv' 파일을 생성한다.
-
-- Dataset 통계
-  - train dataset : 총 32470개
-  - test dataset : 7765개 (label은 전부 100으로 처리되어 있습니다.)
-- Data 예시 (`train.csv`)
-  - `id`, `sentence`, `subject_entity`, `object_entity`, `label`, `source`로 구성된 csv 파일
-  - `sentence example` : <Something>는 조지 해리슨이 쓰고 비틀즈가 1969년 앨범 《Abbey Road》에 담은 노래다. (문장)
-  - `subject_entity example` : {'word': '조지 해리슨', 'start_idx': 13, 'end_idx': 18, 'type': 'PER'} (단어, 시작 idx, 끝 idx, 타입)
-  - `object_entity example` : {'word': '비틀즈', 'start_idx': 24, 'end_idx': 26, 'type': 'ORG'} (단어, 시작 idx, 끝 idx, 타입)
-  - `label example` : no_relation (관계),
-  - `source example` : wikipedia (출처)
-- Relation class에 대한 정보는 다음과 같습니다.
-  ![1](https://user-images.githubusercontent.com/53552847/136692171-30942eec-fb83-4175-aa8d-13559ae2caf1.PNG)
-
-## code
-
-- `train.py`
-
-  - code를 학습시키기 위한 파일입니다.
-  - 저장된 model관련 파일은 `results` 폴더에 있습니다.
-
-- `inference.py`
-
-  - 학습된 model을 통해 prediction하며, 예측한 결과를 csv 파일로 저장해줍니다.
-  - 저장된 파일은 prediction 폴더에 있습니다.
-
-- `load_data.py`
-
-  - baseline code의 전처리와 데이터셋 구성을 위한 함수들이 있는 코드입니다.
-
-- `logs`
-
-  - 텐서보드 로그가 담기는 폴더 입니다.
-
-- `prediction`
-
-  - `inference.py` 를 통해 model이 예측한 정답 `submission.csv` 파일이 저장되는 폴더 입니다.
-
-- `results`
-
-  - `train.py`를 통해 설정된 step 마다 model이 저장되는 폴더 입니다.
-
-- `best_model `
-
-  - 학습중 evaluation이 best인 model이 저장 됩니다.
-
-- `dict_label_to_num.pkl`
-
-  - 문자로 되어 있는 label을 숫자로 변환 시킬 dictionary 정보가 저장되어 있습니다.
-
-- `dict_num_to_label.pkl`
-  - 숫자로 되어 있는 label을 원본 문자로 변환 시킬 dictionary 정보가 저장되어 있습니다.
-
-## Implementation
-
-In Terminal
-
-- Install Requirements
-
-```python
-pip install -r requirements.txt
-```
-
-- training
-
-```
-python train.py
-```
-
-- inference
-
-```
-python inference.py
-```
-
 ## Arguments Usage
 
 - RBERT
@@ -150,3 +42,18 @@ python inference.py
 | evaluation_steps       | int   | 100                             | evaluation할 step 수                         |
 | metric_for_best_model  | str   | eval/loss                       | 최고 성능을 가늠하는 metric                  |
 | load_best_model_at_end | bool  | True                            |
+
+## References
+
+- [monologg's R-BERT Implementation in Pytorch](https://github.com/monologg/R-BERT)
+- [Enriching Pre-trained Language Model with Entity Information for Relation Classification](https://arxiv.org/abs/1905.08284?context=cs)
+
+## Authorship
+
+- [jjonhwa](https://github.com/jjonhwa)
+- [🤚 snoop2head](https://github.com/snoop2head)
+- [kimyeondu](kimyeondu)
+- [hihellohowareyou](https://github.com/hihellohowareyou)
+- [shawnhyeonsoo](https://github.com/shawnhyeonsoo)
+- [danielkim30433](https://github.com/danielkim30433)
+- [ntommy11](https://github.com/ntommy11)
