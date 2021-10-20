@@ -1,3 +1,4 @@
+import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -5,7 +6,9 @@ from torch.autograd import Variable
 
 
 class FocalLoss(nn.Module):
-    def __init__(self, weight=None, gamma=2.0, reduction="mean"):
+    """https://discuss.pytorch.org/t/is-this-a-correct-implementation-for-focal-loss-in-pytorch/43327/8"""
+
+    def __init__(self, weight=None, gamma=1.0, reduction="mean"):
         nn.Module.__init__(self)
         self.weight = weight
         self.gamma = gamma
@@ -65,6 +68,8 @@ class F1Loss(nn.Module):
 
 
 class ArcFaceLoss(nn.modules.Module):
+    """https://github.com/ronghuaiyang/arcface-pytorch"""
+
     def __init__(self, s=45.0, m=0.1, crit="bce", weight=None, reduction="mean"):
         super().__init__()
 

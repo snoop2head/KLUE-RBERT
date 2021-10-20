@@ -7,7 +7,7 @@ import pandas as pd
 from tqdm import tqdm
 from dataset import *
 from torch.utils.data import DataLoader, Dataset, Subset
-from utils.metrics import *
+from metrics import *
 import torch.nn.functional as F
 from dataset import *
 import os
