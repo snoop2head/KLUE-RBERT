@@ -6,7 +6,7 @@
 - Relation extraction can be defined as multiclass classification task for relationship between subject entity and object entity.
 - Classes are such as `no_relation`, `per:employee_of`, `org:founded_by`... totaling 30 labels. 
 - This repo contains custom fine-tuning method utilizing [monologg's R-BERT Implementation](https://github.com/monologg/R-BERT).
-- Custom labeling with [Pororo NER](https://github.com/kakaobrain/pororo/blob/master/pororo/tasks/named_entity_recognition.py) has been added to the dataset prior to the model's training.
+- Custom punctuations with [Pororo NER](https://github.com/kakaobrain/pororo/blob/master/pororo/tasks/named_entity_recognition.py) has been added to the dataset prior to the model's training.
 - If you want to refer to the experimentation note such as punctuation method of the entity, please [refer to the blog post](https://snoop2head.github.io/Relation-Extraction/)
 
 
