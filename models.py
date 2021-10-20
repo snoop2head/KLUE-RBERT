@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 import torch.nn as nn
-from transformers import AutoModel, AutoConfig, AutoTokenizer
+from transformers import AutoModel, AutoConfig
 
 
 class FCLayer(nn.Module):

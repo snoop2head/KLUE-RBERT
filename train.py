@@ -11,7 +11,6 @@ from sklearn.metrics import f1_score, confusion_matrix
 
 # import torch and its applications
 import torch
-from torch.cuda.amp import GradScaler
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Subset
 

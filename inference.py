@@ -1,18 +1,20 @@
-from transformers import AutoTokenizer
-
 # import dataset wrangler
 import numpy as np
 import pandas as pd
 
-from tqdm import tqdm
-from dataset import *
-from torch.utils.data import DataLoader, Dataset, Subset
-from metrics import *
+# import torch and its derivatives
+from torch.utils.data import DataLoader
 import torch.nn.functional as F
-from dataset import *
-import os
-from models import *
+
+# import third party library
 import yaml
+from tqdm import tqdm
+from transformers import AutoTokenizer
+
+# import custom modules
+from metrics import *
+from dataset import *
+from models import *
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 DATA_CFG = {}
