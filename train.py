@@ -1,6 +1,4 @@
 # import python innate modules
-import argparse
-import json
 import random
 import os
 
@@ -20,14 +18,9 @@ from torch.utils.data.dataset import Subset
 # import transformers and its applications
 from transformers import (
     AutoTokenizer,
-    AutoConfig,
-    AutoModelForSequenceClassification,
-    TrainingArguments,
-    Trainer,
     AdamW,
     get_cosine_schedule_with_warmup,
 )
-from transformers.optimization import get_linear_schedule_with_warmup
 
 # import third party modules
 import yaml
