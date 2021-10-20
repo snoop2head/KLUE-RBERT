@@ -1,8 +1,6 @@
-# import python innate functions
-import random
-import pickle
-from ast import literal_eval
-from collections import defaultdict
+# import python innate modules
+import os
+import pickle as pickle
 
 # import dataset wrangler
 import numpy as np
@@ -35,6 +33,16 @@ DATA_CFG = SAVED_CFG["data"]
 IB_CFG = SAVED_CFG["IB"]
 RBERT_CFG = SAVED_CFG["RBERT"]
 CONCAT_CFG = SAVED_CFG["Concat"]
+
+
+def label_to_num(label=None):
+    num_label = []
+    with open(DATA_CFG.label_to_num_file_path, "rb") as f:
+        dict_label_to_num = pickle.load(f)
+    for v in label:
+        num_label.append(dict_label_to_num[v])
+
+    return num_label
 
 
 class RBERT_Dataset(Dataset):
