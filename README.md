@@ -16,7 +16,9 @@ Korean Language Understanding Evaluation(KLUE) Benchmark is composed of 8 tasks:
 - Dialogue State Tracking (DST)
 
 Relation extraction can be defined as multiclass classification task for relationship between subject entity and object entity.
+
 Labels are such as `no_relation`, `per:employee_of`, `org:founded_by` totaling 30 labels. 
+
 This repo contains custom dataset, custom training code utilizing [monologg's R-BERT Implementation](https://github.com/monologg/R-BERT).
 
 
