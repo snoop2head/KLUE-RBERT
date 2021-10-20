@@ -31,6 +31,7 @@ from adamp import AdamP
 from dataset import *
 from models import *
 from metrics import *
+from loss import *
 
 DATA_CFG = {}
 IB_CFG = {}
