@@ -72,7 +72,7 @@ class RBERT_Dataset(Dataset):
         concat_entity = subject_entity + "[SEP]" + object_entity
 
         # tokenize
-        item = self.tokenizer(
+        encoded_dict = self.tokenizer(
             concat_entity,
             sentence,
             return_tensors="pt",
@@ -84,26 +84,26 @@ class RBERT_Dataset(Dataset):
         )
 
         # RoBERTa's provided masks (do not include token_type_ids for RoBERTa)
-        item["input_ids"] = item["input_ids"].squeeze(0)
-        item["attention_mask"] = item["attention_mask"].squeeze(0)
+        encoded_dict["input_ids"] = encoded_dict["input_ids"].squeeze(0)
+        encoded_dict["attention_mask"] = encoded_dict["attention_mask"].squeeze(0)
 
         # add subject and object entity masks where masks notate where the entity is
         subject_entity_mask, object_entity_mask = self.add_entity_mask(
-            item, subject_entity, object_entity
+            encoded_dict, subject_entity, object_entity
         )
-        item["subject_mask"] = subject_entity_mask
-        item["object_mask"] = object_entity_mask
+        encoded_dict["subject_mask"] = subject_entity_mask
+        encoded_dict["object_mask"] = object_entity_mask
 
         # fill label
-        item["label"] = label
-        return item
+        encoded_dict["label"] = label
+        return encoded_dict
 
     def __len__(self):
         return len(self.dataset)
 
-    def add_entity_mask(self, item, subject_entity, object_entity):
+    def add_entity_mask(self, encoded_dict, subject_entity, object_entity):
         """add entity token to input_ids"""
-        # print("tokenized input ids: \n",item['input_ids'])
+        # print("tokenized input ids: \n",encoded_dict['input_ids'])
 
         # initialize entity masks
         subject_entity_mask = np.zeros(RBERT_CFG.max_token_length, dtype=int)
@@ -122,8 +122,8 @@ class RBERT_Dataset(Dataset):
         subject_entity_length = len(subject_entity_token_ids)
         object_entity_length = len(object_entity_token_ids)
 
-        # find coordinates of subject_entity_token_ids inside the item["input_ids"]
-        subject_coordinates = np.where(item["input_ids"] == subject_entity_token_ids[0])
+        # find coordinates of subject_entity_token_ids inside the encoded_dict["input_ids"]
+        subject_coordinates = np.where(encoded_dict["input_ids"] == subject_entity_token_ids[0])
         subject_coordinates = list(
             map(int, subject_coordinates[0])
         )  # change the subject_coordinates into int type
@@ -132,8 +132,8 @@ class RBERT_Dataset(Dataset):
                 subject_index : subject_index + subject_entity_length
             ] = 1
 
-        # find coordinates of object_entity_token_ids inside the item["input_ids"]
-        object_coordinates = np.where(item["input_ids"] == object_entity_token_ids[0])
+        # find coordinates of object_entity_token_ids inside the encoded_dict["input_ids"]
+        object_coordinates = np.where(encoded_dict["input_ids"] == object_entity_token_ids[0])
         object_coordinates = list(
             map(int, object_coordinates[0])
         )  # change the object_coordinates into int type
