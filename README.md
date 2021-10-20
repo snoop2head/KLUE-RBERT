@@ -1,9 +1,5 @@
 # RBERT for Relation Extraction task for KLUE
 
-## Hardware
-
-- `GPU : Tesla V100 32GB`
-
 ## Project Description
 
 Relation Extraction task is one of [KLUE Benchmark](https://github.com/KLUE-benchmark/KLUE)'s task. 
@@ -51,6 +47,7 @@ This repo contains custom dataset, custom training code utilizing [monologg's R-
 
 - [monologg's R-BERT Implementation in Pytorch](https://github.com/monologg/R-BERT)
 - [Enriching Pre-trained Language Model with Entity Information for Relation Classification](https://arxiv.org/abs/1905.08284?context=cs)
+- [KLUE: Korean Language Understanding Evaluation](https://github.com/KLUE-benchmark/KLUE)
 
 ## Authorship
 
@@ -61,3 +58,7 @@ This repo contains custom dataset, custom training code utilizing [monologg's R-
 - [shawnhyeonsoo](https://github.com/shawnhyeonsoo)
 - [danielkim30433](https://github.com/danielkim30433)
 - [ntommy11](https://github.com/ntommy11)
+
+## Hardware
+
+- `GPU : Tesla V100 32GB`
