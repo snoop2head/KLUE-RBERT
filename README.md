@@ -11,8 +11,6 @@
 
 ## Arguments Usage
 
-- RBERT
-
 | Argument               | type  | Default                         | Explanation                                  |
 | ---------------------- | ----- | ------------------------------- | -------------------------------------------- |
 | batch_size             | int   | 40                              | batch size for training and inferece                |
@@ -37,11 +35,12 @@
 - [monologg's R-BERT Implementation in Pytorch](https://github.com/monologg/R-BERT)
 - [Enriching Pre-trained Language Model with Entity Information for Relation Classification](https://arxiv.org/abs/1905.08284?context=cs)
 - [KLUE: Korean Language Understanding Evaluation](https://github.com/KLUE-benchmark/KLUE)
+- [Pororo's NER Documentation](https://kakaobrain.github.io/pororo/tagging/ner.html)
 
 ## Authorship
 
-- [jjonhwa](https://github.com/jjonhwa)
 - [🤚 snoop2head](https://github.com/snoop2head)
+- [jjonhwa](https://github.com/jjonhwa)
 - [kimyeondu](kimyeondu)
 - [hihellohowareyou](https://github.com/hihellohowareyou)
 - [shawnhyeonsoo](https://github.com/shawnhyeonsoo)
