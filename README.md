@@ -19,6 +19,8 @@ Korean Language Understanding Evaluation(KLUE) Benchmark is composed of 8 tasks:
 - Machine Reading Comprehension (MRC)
 - Dialogue State Tracking (DST)
 
+Relation extraction can be defined as multiclass classification task for relationship between subject entity and object entity.
+Labels are such as `no_relation`, `per:employee_of`, `org:founded_by` totaling 30 labels. 
 This repo contains custom dataset, custom training code utilizing [monologg's R-BERT Implementation](https://github.com/monologg/R-BERT).
 
 
@@ -28,21 +30,21 @@ This repo contains custom dataset, custom training code utilizing [monologg's R-
 
 | Argument               | type  | Default                         | Explanation                                  |
 | ---------------------- | ----- | ------------------------------- | -------------------------------------------- |
-| batch_size             | int   | 40                              | 학습&예측에 사용될 batch size                |
-| num_folds              | int   | 5                               | Stratified KFold의 fold 개수                 |
-| num_train_epochs       | int   | 5                               | 학습 epoch                                   |
+| batch_size             | int   | 40                              | batch size for training and inferece                |
+| num_folds              | int   | 5                               | number of fold for Stratified KFold                 |
+| num_train_epochs       | int   | 5                               | number of epochs for training                                   |
 | loss                   | str   | focalloss                       | loss function                                |
-| gamma                  | float | 1.0                             | focalloss 사용시 gamma 값                    |
-| optimizer              | str   | adamp                           | 학습 optimizer                               |
-| scheduler              | str   | get_cosine_schedule_with_warmup | learning rate를 조절하는 scheduler           |
-| learning_rate          | float | 0.00005                         | 초기 learning rate 값                        |
-| weight_decay           | float | 0.01                            | Loss function에 Weigth가 커질 경우 패널티 값 |
+| gamma                  | float | 1.0                             | focalloss's gamma value                    |
+| optimizer              | str   | adamp                           | optimizer for training                               |
+| scheduler              | str   | get_cosine_schedule_with_warmup | learning rate scheduler           |
+| learning_rate          | float | 0.00005                         | initial learning rate                        |
+| weight_decay           | float | 0.01                            | Loss function's weight decay, preventing overfit |
 | warmup_step            | int   | 500                             |
-| debug                  | bool  | false                           | 디버그 모드일 경우 True                      |
-| dropout_rate           | float | 0.1                             | dropout 비율                                 |
-| save_steps             | int   | 100                             | 모델 저장 step 수                            |
-| evaluation_steps       | int   | 100                             | evaluation할 step 수                         |
-| metric_for_best_model  | str   | eval/loss                       | 최고 성능을 가늠하는 metric                  |
+| debug                  | bool  | false                           | debug with CPU device for better error representation                     |
+| dropout_rate           | float | 0.1                             |                                  |
+| save_steps             | int   | 100                             | number of steps for saving the model                            |
+| evaluation_steps       | int   | 100                             | number of step until the evaluation                         |
+| metric_for_best_model  | str   | eval/loss                       | the metric for determining which is the best model                  |
 | load_best_model_at_end | bool  | True                            |
 
 ## References
