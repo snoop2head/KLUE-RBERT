@@ -2,24 +2,11 @@
 
 ## Project Description
 
-Relation Extraction task is one of [KLUE Benchmark](https://github.com/KLUE-benchmark/KLUE)'s task. 
-
-Korean Language Understanding Evaluation(KLUE) Benchmark is composed of 8 tasks:
-
-- Topic Classification (TC)
-- Sentence Textual Similarity (STS)
-- Natural Language Inference (NLI)
-- Named Entity Recognition (NER)
-- **Relation Extraction (RE)**
-- (Part-Of-Speech) + Dependency Parsing (DP)
-- Machine Reading Comprehension (MRC)
-- Dialogue State Tracking (DST)
-
-Relation extraction can be defined as multiclass classification task for relationship between subject entity and object entity.
-
-Labels are such as `no_relation`, `per:employee_of`, `org:founded_by` totaling 30 labels. 
-
-This repo contains custom dataset, custom training code utilizing [monologg's R-BERT Implementation](https://github.com/monologg/R-BERT).
+- Relation Extraction task is one of [Korean Language Understanding Evaluation(KLUE) Benchmark](https://github.com/KLUE-benchmark/KLUE)'s task. 
+- Relation extraction can be defined as multiclass classification task for relationship between subject entity and object entity.
+- Labels are such as `no_relation`, `per:employee_of`, `org:founded_by` totaling 30 labels. 
+- This repo contains custom dataset, custom training code utilizing [monologg's R-BERT Implementation](https://github.com/monologg/R-BERT).
+- Custom labeling with [Pororo NER](https://github.com/kakaobrain/pororo/blob/master/pororo/tasks/named_entity_recognition.py) has been added to the dataset prior to the model's training.
 
 
 ## Arguments Usage
