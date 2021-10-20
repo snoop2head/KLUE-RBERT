@@ -38,7 +38,7 @@ from adamp import AdamP
 # import custom modules
 from dataset import *
 from models import *
-from utils.metrics import *
+from metrics import *
 
 DATA_CFG = {}
 IB_CFG = {}
