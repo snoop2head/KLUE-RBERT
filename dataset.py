@@ -123,22 +123,41 @@ class RBERT_Dataset(Dataset):
         object_entity_length = len(object_entity_token_ids)
 
         # find coordinates of subject_entity_token_ids inside the encoded_dict["input_ids"]
-        subject_coordinates = np.where(encoded_dict["input_ids"] == subject_entity_token_ids[0])
+        subject_coordinates = np.where(
+            encoded_dict["input_ids"] == subject_entity_token_ids[0]
+        )
         subject_coordinates = list(
             map(int, subject_coordinates[0])
         )  # change the subject_coordinates into int type
         for subject_index in subject_coordinates:
-            subject_entity_mask[
-                subject_index : subject_index + subject_entity_length
-            ] = 1
+            # if the sliced input_ids of the sentence equals to subject_entity_token_ids
+            if (
+                encoded_dict["input_ids"][
+                    subject_index : subject_index + subject_entity_length
+                ]
+                == subject_entity_token_ids
+            ):
+                subject_entity_mask[
+                    subject_index : subject_index + subject_entity_length
+                ] = 1
 
         # find coordinates of object_entity_token_ids inside the encoded_dict["input_ids"]
-        object_coordinates = np.where(encoded_dict["input_ids"] == object_entity_token_ids[0])
+        object_coordinates = np.where(
+            encoded_dict["input_ids"] == object_entity_token_ids[0]
+        )
         object_coordinates = list(
             map(int, object_coordinates[0])
         )  # change the object_coordinates into int type
         for object_index in object_coordinates:
-            object_entity_mask[object_index : object_index + object_entity_length] = 1
+            if (
+                encoded_dict["input_ids"][
+                    object_index : object_index + object_entity_length
+                ]
+                == object_entity_token_ids
+            ):
+                object_entity_mask[
+                    object_index : object_index + object_entity_length
+                ] = 1
 
         # print(subject_entity_mask)
         # print(object_entity_mask)
