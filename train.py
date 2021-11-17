@@ -33,19 +33,19 @@ from models import *
 from metrics import *
 from loss import *
 
-DATA_CFG = {}
-IB_CFG = {}
-RBERT_CFG = {}
-CONCAT_CFG = {}
+class dotdict(dict):
+    """dot.notation access to dictionary attributes, as dict.key_name, not as dict["key_name"] """
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
 
 # Read config.yaml file
 with open("config.yaml") as infile:
     SAVED_CFG = yaml.load(infile, Loader=yaml.FullLoader)
+    dotdict(SAVED_CFG)
 
-DATA_CFG = SAVED_CFG["data"]
-IB_CFG = SAVED_CFG["IB"]
-RBERT_CFG = SAVED_CFG["RBERT"]
-CONCAT_CFG = SAVED_CFG["Concat"]
+DATA_CFG = dotdict(SAVED_CFG["data"])
+RBERT_CFG = dotdict(SAVED_CFG["RBERT"])
 
 
 def seed_everything(seed: int = 42):
@@ -74,7 +74,7 @@ def train_rbert():
     df_pororo_dataset = df_pororo_dataset.drop(df_pororo_dataset.columns[0], axis=1)
 
     # fetch tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(RBERT_CFG.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(RBERT_CFG.pretrained_model_name)
 
     # fetch special tokens annotated with ner task
     special_token_list = []
@@ -122,7 +122,7 @@ def train_rbert():
         )
 
         # fetch model
-        model = RBERT(RBERT_CFG.model_name)
+        model = RBERT(RBERT_CFG.pretrained_model_name)
         model.to(device)
 
         # fetch loss function, optimizer, scheduler outside of torch library
@@ -234,3 +234,6 @@ def train_rbert():
         model.cpu()
         del model
         torch.cuda.empty_cache()
+
+if __name__ == "__main__":
+    train_rbert()

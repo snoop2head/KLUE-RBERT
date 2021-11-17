@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader
 import torch.nn.functional as F
 
 # import third party library
+from easydict import EasyDict
 import yaml
 from tqdm import tqdm
 from transformers import AutoTokenizer
@@ -17,19 +18,20 @@ from dataset import *
 from models import *
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-DATA_CFG = {}
-IB_CFG = {}
-RBERT_CFG = {}
-CONCAT_CFG = {}
+
+class dotdict(dict):
+    """dot.notation access to dictionary attributes, as dict.key_name, not as dict["key_name"] """
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
 
 # Read config.yaml file
 with open("config.yaml") as infile:
     SAVED_CFG = yaml.load(infile, Loader=yaml.FullLoader)
+    dotdict(SAVED_CFG)
 
-DATA_CFG = SAVED_CFG["data"]
-IB_CFG = SAVED_CFG["IB"]
-RBERT_CFG = SAVED_CFG["RBERT"]
-CONCAT_CFG = SAVED_CFG["Concat"]
+DATA_CFG = dotdict(SAVED_CFG["data"])
+RBERT_CFG = dotdict(SAVED_CFG["RBERT"])
 
 
 def num_to_label(label):

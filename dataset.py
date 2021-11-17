@@ -18,21 +18,22 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 
 
 # import third party modules
+from easydict import EasyDict
 import yaml
 
-DATA_CFG = {}
-IB_CFG = {}
-RBERT_CFG = {}
-CONCAT_CFG = {}
+class dotdict(dict):
+    """dot.notation access to dictionary attributes, as dict.key_name, not as dict["key_name"] """
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
 
 # Read config.yaml file
 with open("config.yaml") as infile:
     SAVED_CFG = yaml.load(infile, Loader=yaml.FullLoader)
+    dotdict(SAVED_CFG)
 
-DATA_CFG = SAVED_CFG["data"]
-IB_CFG = SAVED_CFG["IB"]
-RBERT_CFG = SAVED_CFG["RBERT"]
-CONCAT_CFG = SAVED_CFG["Concat"]
+DATA_CFG = dotdict(SAVED_CFG["data"])
+RBERT_CFG = dotdict(SAVED_CFG["RBERT"])
 
 
 def label_to_num(label=None):
