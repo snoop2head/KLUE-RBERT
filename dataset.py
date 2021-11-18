@@ -21,11 +21,14 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 from easydict import EasyDict
 import yaml
 
+
 class dotdict(dict):
     """dot.notation access to dictionary attributes, as dict.key_name, not as dict["key_name"] """
+
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
+
 
 # Read config.yaml file
 with open("config.yaml") as infile:
@@ -49,6 +52,8 @@ def label_to_num(label=None):
 class RBERT_Dataset(Dataset):
     def __init__(self, dataset, tokenizer, is_training: bool = True):
 
+        print(dataset.head())
+
         # pandas.Dataframe dataset
         self.dataset = dataset
         self.sentence = self.dataset["sentence"]
@@ -60,11 +65,12 @@ class RBERT_Dataset(Dataset):
             self.train_label = self.dataset["label"].values
         self.label = torch.tensor(self.train_label)
 
-        # tokenizer and etc
+        # set tokenizer
         self.tokenizer = tokenizer
 
     def __getitem__(self, idx):
         sentence = self.sentence[idx]
+        print(sentence)
         subject_entity = self.subject_entity[idx]
         object_entity = self.object_entity[idx]
         label = self.label[idx]
@@ -88,6 +94,11 @@ class RBERT_Dataset(Dataset):
         encoded_dict["input_ids"] = encoded_dict["input_ids"].squeeze(0)
         encoded_dict["attention_mask"] = encoded_dict["attention_mask"].squeeze(0)
 
+        print(
+            "encoded-dict",
+            self.tokenizer.convert_ids_to_tokens(encoded_dict["input_ids"]),
+        )
+
         # add subject and object entity masks where masks notate where the entity is
         subject_entity_mask, object_entity_mask = self.add_entity_mask(
             encoded_dict, subject_entity, object_entity
@@ -104,20 +115,29 @@ class RBERT_Dataset(Dataset):
 
     def add_entity_mask(self, encoded_dict, subject_entity, object_entity):
         """add entity token to input_ids"""
-        # print("tokenized input ids: \n",encoded_dict['input_ids'])
+        print("tokenized input ids: \n", encoded_dict["input_ids"])
 
         # initialize entity masks
+        print(RBERT_CFG.max_token_length)
         subject_entity_mask = np.zeros(RBERT_CFG.max_token_length, dtype=int)
         object_entity_mask = np.zeros(RBERT_CFG.max_token_length, dtype=int)
+        print("subject_entity_mask: \n", subject_entity_mask)
+        print("object_entity_mask: \n", object_entity_mask)
 
         # get token_id from encoding subject_entity and object_entity
+        print("subject_entity: \n", subject_entity)
+        print("object_entity: \n", object_entity)
         subject_entity_token_ids = self.tokenizer.encode(
             subject_entity, add_special_tokens=False
         )
         object_entity_token_ids = self.tokenizer.encode(
             object_entity, add_special_tokens=False
         )
-        # print("entity token's input ids: ",subject_entity_token_ids, object_entity_token_ids)
+        print(
+            "entity token's input ids: ",
+            subject_entity_token_ids,
+            object_entity_token_ids,
+        )
 
         # get the length of subject_entity and object_entity
         subject_entity_length = len(subject_entity_token_ids)
@@ -125,42 +145,29 @@ class RBERT_Dataset(Dataset):
 
         # find coordinates of subject_entity_token_ids inside the encoded_dict["input_ids"]
         subject_coordinates = np.where(
-            encoded_dict["input_ids"] == subject_entity_token_ids[0]
+            encoded_dict["input_ids"] == subject_entity_token_ids[1]
         )
-        subject_coordinates = list(
-            map(int, subject_coordinates[0])
-        )  # change the subject_coordinates into int type
-        for subject_index in subject_coordinates:
-            # if the sliced input_ids of the sentence equals to subject_entity_token_ids
-            if (
-                encoded_dict["input_ids"][
-                    subject_index : subject_index + subject_entity_length
-                ]
-                == subject_entity_token_ids
-            ):
-                subject_entity_mask[
-                    subject_index : subject_index + subject_entity_length
-                ] = 1
+        # change the subject_coordinates into int type
+        subject_coordinates = list(map(int, subject_coordinates[0]))
 
+        print("subject_coordinates: ", subject_coordinates)
+        for subject_index in subject_coordinates:
+            subject_entity_mask[
+                subject_index : subject_index + subject_entity_length
+            ] = 1
         # find coordinates of object_entity_token_ids inside the encoded_dict["input_ids"]
         object_coordinates = np.where(
-            encoded_dict["input_ids"] == object_entity_token_ids[0]
+            encoded_dict["input_ids"] == object_entity_token_ids[1]
         )
         object_coordinates = list(
             map(int, object_coordinates[0])
         )  # change the object_coordinates into int type
-        for object_index in object_coordinates:
-            if (
-                encoded_dict["input_ids"][
-                    object_index : object_index + object_entity_length
-                ]
-                == object_entity_token_ids
-            ):
-                object_entity_mask[
-                    object_index : object_index + object_entity_length
-                ] = 1
 
-        # print(subject_entity_mask)
-        # print(object_entity_mask)
+        print("object_coordinates", object_coordinates)
+        for object_index in object_coordinates:
+            object_entity_mask[object_index : object_index + object_entity_length] = 1
+        print(subject_entity_mask)
+        print(object_entity_mask)
 
         return torch.Tensor(subject_entity_mask), torch.Tensor(object_entity_mask)
+
