@@ -26,7 +26,7 @@ RBERT:
   # train configuration
   pretrained_model_name: klue/roberta-large
   fine_tuning_method: RBERT
-  batch_size: 40
+  batch_size: 32
   num_folds: 5
   num_train_epochs: 5
   loss: focalloss

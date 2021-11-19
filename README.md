@@ -14,7 +14,7 @@
 
 | Argument               | type  | Default                         | Explanation                                  |
 | ---------------------- | ----- | ------------------------------- | -------------------------------------------- |
-| batch_size             | int   | 40                              | batch size for training and inferece                |
+| batch_size             | int   | 32                              | batch size for training and inferece                |
 | num_folds              | int   | 5                               | number of fold for Stratified KFold                 |
 | num_train_epochs       | int   | 5                               | number of epochs for training                                   |
 | loss                   | str   | focalloss                       | loss function                                |

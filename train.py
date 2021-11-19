@@ -33,11 +33,14 @@ from models import *
 from metrics import *
 from loss import *
 
+
 class dotdict(dict):
     """dot.notation access to dictionary attributes, as dict.key_name, not as dict["key_name"] """
+
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
+
 
 # Read config.yaml file
 with open("config.yaml") as infile:
@@ -82,22 +85,33 @@ def train_rbert():
         for token in f:
             special_token_list.append(token.split("\n")[0])
 
+    tokenizer.add_special_tokens(
+        {"additional_special_tokens": list(set(special_token_list))}
+    )
+    # print special tokens
+    print(tokenizer.special_tokens_map)
+
     if torch.cuda.is_available() and RBERT_CFG.debug == False:
         device = torch.device("cuda")
         print(f"There are {torch.cuda.device_count()} GPU(s) available.")
         print("GPU Name:", torch.cuda.get_device_name(0))
+        print(os.system("nvidia-smi"))
     else:
         print("No GPU, using CPU.")
         device = torch.device("cpu")
 
-    criterion = FocalLoss(gamma=RBERT_CFG.gamma)  # 0.0 equals to CrossEntropy
-
     train_data = RBERT_Dataset(df_pororo_dataset, tokenizer)
     dev_data = RBERT_Dataset(df_pororo_dataset, tokenizer)
+    # print(df_pororo_dataset.head())
 
     stf = StratifiedKFold(
         n_splits=RBERT_CFG.num_folds, shuffle=True, random_state=seed_everything(42)
     )
+
+    # criterion = FocalLoss(gamma=RBERT_CFG.gamma)  # 0.0 equals to CrossEntropy
+    criterion = nn.CrossEntropyLoss()
+
+    early_stop = 0
 
     for fold_num, (train_idx, dev_idx) in enumerate(
         stf.split(df_pororo_dataset, list(df_pororo_dataset["label"]))
@@ -107,6 +121,10 @@ def train_rbert():
 
         train_set = Subset(train_data, train_idx)
         dev_set = Subset(dev_data, dev_idx)
+        # print(train_set[0])
+        # print(train_set[0]["subject_mask"])
+        # print(train_set[0]["object_mask"])
+        # print(train_set[0]["label"])
 
         train_loader = DataLoader(
             train_set,
@@ -139,28 +157,30 @@ def train_rbert():
         scheduler = get_cosine_schedule_with_warmup(
             optimizer,
             num_warmup_steps=RBERT_CFG.warmup_steps,
-            num_training_steps=len(train_loader) * RBERT_CFG.num_epochs,
+            num_training_steps=len(train_loader) * RBERT_CFG.num_train_epochs,
         )
 
         best_eval_loss = 1.0
         steps = 0
 
         # fetch training loop
-        for epoch in tqdm(range(RBERT_CFG.num_epochs)):
+        for epoch in tqdm(range(RBERT_CFG.num_train_epochs)):
             train_loss = Metrics()
             dev_loss = Metrics()
             for _, batch in enumerate(train_loader):
                 optimizer.zero_grad()
                 # print(item)
                 # assign forward() arguments to the device
+                # print(batch)
+                # print(batch["input_ids"].shape)
 
-                label = batch[4].to(device)
+                label = batch["label"].to(device)
                 inputs = {
-                    "input_ids": batch[0].to(device),
-                    "attention_mask": batch[1].to(device),
-                    "subject_mask": batch[2].to(device),
+                    "input_ids": batch["input_ids"].to(device),
+                    "attention_mask": batch["attention_mask"].to(device),
+                    "subject_mask": batch["subject_mask"].to(device),
                     # 'token_type_ids' # NOT FOR ROBERTA!
-                    "object_mask": batch[3].to(device),
+                    "object_mask": batch["object_mask"].to(device),
                     "label": label,
                 }
 
@@ -168,6 +188,7 @@ def train_rbert():
                 model.train()
                 pred_logits = model(**inputs)
                 loss = criterion(pred_logits, label)
+                # print(loss)
 
                 # backward
                 loss.backward()
@@ -176,23 +197,24 @@ def train_rbert():
 
                 # update metrics
                 train_loss.update(loss.item(), len(label))
+                # print(train_loss)
 
                 steps += 1
                 # for every 100 steps
-                if steps % 100 == 0:
+                if steps % 10 == 0:
                     print(
-                        "Epoch: {}/{}".format(epoch + 1, RBERT_CFG.num_epochs),
+                        "Epoch: {}/{}".format(epoch + 1, RBERT_CFG.num_train_epochs),
                         "Step: {}".format(steps),
                         "Train Loss: {:.4f}".format(train_loss.avg),
                     )
                     for dev_batch in dev_loader:
-                        dev_label = dev_batch[4].to(device)
+                        dev_label = dev_batch["label"].to(device)
                         dev_inputs = {
-                            "input_ids": dev_batch[0].to(device),
-                            "attention_mask": dev_batch[1].to(device),
-                            "subject_mask": dev_batch[2].to(device),
+                            "input_ids": dev_batch["input_ids"].to(device),
+                            "attention_mask": dev_batch["attention_mask"].to(device),
+                            "subject_mask": dev_batch["subject_mask"].to(device),
                             # 'token_type_ids' # NOT FOR ROBERTA!
-                            "object_mask": dev_batch[3].to(device),
+                            "object_mask": dev_batch["object_mask"].to(device),
                             "label": dev_label,
                         }
 
@@ -206,7 +228,7 @@ def train_rbert():
 
                     # print metrics
                     print(
-                        "Epoch: {}/{}".format(epoch + 1, RBERT_CFG.num_epochs),
+                        "Epoch: {}/{}".format(epoch + 1, RBERT_CFG.num_train_epochs),
                         "Step: {}".format(steps),
                         "Dev Loss: {:.4f}".format(dev_loss.avg),
                     )
@@ -234,6 +256,7 @@ def train_rbert():
         model.cpu()
         del model
         torch.cuda.empty_cache()
+
 
 if __name__ == "__main__":
     train_rbert()
