@@ -81,7 +81,7 @@ class RBERT(nn.Module):
         attention_mask,
         subject_mask=None,
         object_mask=None,
-        labels=None,
+        label=None,
     ):
 
         outputs = self.backbone_model(
