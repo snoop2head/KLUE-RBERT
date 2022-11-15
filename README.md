@@ -9,6 +9,13 @@
 - Custom punctuations with [Pororo NER](https://github.com/kakaobrain/pororo/blob/master/pororo/tasks/named_entity_recognition.py) has been added to the dataset prior to the model's training.
 - If you want to refer to the experimentation note such as punctuation method of the entity, please [refer to the blog post](https://snoop2head.github.io/Relation-Extraction/)
 
+## Usage Example 
+
+RBERT structure can also be used on Code Clone Detection Task and Natural Language Inference Task.
+
+- [🔗 Example on Code Clone Detection Task](https://github.com/sangHa0411/CloneDetection#python-clone-detection)
+- [🔗 Example Notebook on Natural Language Inference Task](https://dacon.io/competitions/official/235875/codeshare/4589)
+
 
 ## Arguments Usage
 
